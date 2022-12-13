@@ -54,7 +54,7 @@ for index, (first, second) in enumerate([tuple(l.splitlines()) for l in open('in
 print(counter)
 
 # q2
-# data = open('input', 'r').read().replace('\n\n', '\n').split('\n')
-# data.extend(["[[2]]", "[[6]]"])
-# data.sort(key=functools.cmp_to_key(comparator))
-# print((data.index("[[2]]") + 1) * (data.index("[[6]]") + 1))
+data = open('input', 'r').read().replace('\n\n', '\n').split('\n')
+data.extend(["[[2]]", "[[6]]"])
+data.sort(key=functools.cmp_to_key(comparator))
+print((data.index("[[2]]") + 1) * (data.index("[[6]]") + 1))
