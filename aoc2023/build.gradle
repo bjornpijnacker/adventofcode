@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'application'
+    id("io.freefair.lombok") version "8.4"
+}
+
+group = 'com.bjornp'
+version = '1.0-SNAPSHOT'
+
+application {
+    mainClassName = 'com.bjornp.aoc2023.Main'
+}
+
+logging.captureStandardOutput(LogLevel.INFO)
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("commons-cli:commons-cli:1.5.0")
+    implementation("commons-io:commons-io:2.11.0")
+    implementation("org.reflections:reflections:0.10.2")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+}
+
+test {
+    useJUnitPlatform()
+}

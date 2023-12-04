@@ -46,13 +46,13 @@ public class SolutionRegistry {
         }
     }
 
-    public void runSolution(int day, AdventOfCodeSolution.RunType runType) throws NoSuchMethodException, InvocationTargetException, InstantiationException,
+    public void runSolution(int day, AdventOfCodeSolution.RunType runType, boolean testMode) throws NoSuchMethodException, InvocationTargetException, InstantiationException,
             IllegalAccessException {
         if (!this.solutions.containsKey(day)) {
             throw new IllegalArgumentException("Day %d has not been registered".formatted(day));
         }
 
         var solutionClass = this.solutions.get(day);
-        solutionClass.getConstructor().newInstance().run(runType);
+        solutionClass.getConstructor().newInstance().run(runType, testMode);
     }
 }

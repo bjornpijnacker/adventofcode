@@ -1,11 +1,14 @@
 package com.bjornp.aoc2023.solutions;
 
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@SuperBuilder
 public abstract class AdventOfCodeSolution {
-    private final AdventOfCodeInputReader inputReader;
     private final int day;
+
+    private final AdventOfCodeInputReader inputReader;
 
     public AdventOfCodeSolution(int day) {
         inputReader = new AdventOfCodeInputReader(day);
@@ -16,19 +19,23 @@ public abstract class AdventOfCodeSolution {
 
     protected abstract String runSolutionB(String input);
 
-    public void run(RunType runType) {
-        if (runType == RunType.ONLY_FIRST || runType == RunType.BOTH) {
+    public void run(RunType runType, boolean testmode) {
+        var inputString = testmode ? inputReader.readInput("test.txt") : inputReader.readInput();
+
+        if (runType == RunType.FIRST || runType == RunType.BOTH) {
             log.info("Running solution %dA".formatted(day));
-            log.info("Solution %dA :: %s".formatted(day, runSolutionA(inputReader.readInputA())));
+            log.info("Solution %dA :: %s".formatted(day, runSolutionA(inputString)));
         }
 
-        if (runType == RunType.ONLY_SECOND || runType == RunType.BOTH) {
+        if (runType == RunType.SECOND || runType == RunType.BOTH) {
             log.info("Running solution %dB".formatted(day));
-            log.info("Solution %dB :: %s".formatted(day, runSolutionB(inputReader.readInputB())));
+            log.info("Solution %dB :: %s".formatted(day, runSolutionB(inputString)));
         }
     }
 
     public enum RunType {
-        ONLY_FIRST, ONLY_SECOND, BOTH
+        FIRST,
+        SECOND,
+        BOTH
     }
 }
