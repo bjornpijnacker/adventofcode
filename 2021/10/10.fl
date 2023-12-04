@@ -1,0 +1,27 @@
+%{
+    #include <stdlib.h>
+    #include "10.tab.h"    
+%}
+
+%%
+
+"("     { return LPAR; }
+")"     { return RPAR; }
+"["     { return LSQ; }
+"]"     { return RSQ; }
+"<"     { return LANGLE; }
+">"     { return RANGLE; }
+"{"     { return LCURL; }
+"}"     { return RCURL; }
+\n      { return NEWLINE; }
+.       { return yytext[0]; }
+
+%%
+
+void setScannerInput(char *input) {
+    yy_scan_string(input);
+}
+
+void finalizeScanner() {
+    yylex_destroy();
+}
