@@ -1,6 +1,6 @@
 package com.bjornp.aoc2023.solutions.implementations;
 
-import com.bjornp.aoc2023.annotation.Solution;
+import com.bjornp.aoc2023.annotation.SolutionDay;
 import com.bjornp.aoc2023.solutions.AdventOfCodeSolution;
 import lombok.Builder;
 import lombok.Data;
@@ -11,14 +11,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-@Solution(day = 2)
+@SolutionDay(day = 2)
 @Slf4j
 public class Day2 extends AdventOfCodeSolution {
     public Day2() {
         super(2);
+
+        register("a", this::runSolutionA);
+        register("b", this::runSolutionB);
     }
 
-    @Override
     protected String runSolutionA(String input) {
         var green = ColorMax.builder().pattern(Pattern.compile("([0-9]+) green")).max(13).build();
         var red = ColorMax.builder().pattern(Pattern.compile("([0-9]+) red")).max(12).build();
@@ -38,7 +40,6 @@ public class Day2 extends AdventOfCodeSolution {
         }).sum());
     }
 
-    @Override
     protected String runSolutionB(String input) {
         var greenRegex = Pattern.compile("([0-9]+) green");
         var redRegex = Pattern.compile("([0-9]+) red");

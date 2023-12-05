@@ -1,6 +1,6 @@
 package com.bjornp.aoc2023.solutions.implementations;
 
-import com.bjornp.aoc2023.annotation.Solution;
+import com.bjornp.aoc2023.annotation.SolutionDay;
 import com.bjornp.aoc2023.solutions.AdventOfCodeSolution;
 import lombok.Builder;
 import lombok.Data;
@@ -13,14 +13,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@Solution(day = 4)
+@SolutionDay(day = 4)
 @Slf4j
 public class Day4 extends AdventOfCodeSolution {
     public Day4() {
         super(4);
+
+        register("a", this::runSolutionA);
+        register("b", this::runSolutionB);
     }
 
-    @Override
     protected String runSolutionA(String input) {
         return String.valueOf(Arrays.stream(input.split("\n")).mapToInt(card -> {
             var splitCard = card.split("[:|]");
@@ -37,7 +39,6 @@ public class Day4 extends AdventOfCodeSolution {
         }).sum());
     }
 
-    @Override
     protected String runSolutionB(String input) {
         var cards = List.of(input.split("\n"));
         var cardMap = new HashMap<Integer, ScratchCard>();

@@ -11,7 +11,6 @@ application {
     mainClassName = 'com.bjornp.aoc2023.Main'
 }
 
-logging.captureStandardOutput(LogLevel.INFO)
 
 repositories {
     mavenCentral()
@@ -23,6 +22,20 @@ dependencies {
     implementation("commons-io:commons-io:2.11.0")
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.apache.commons:commons-lang3:3.12.0")
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass,
+        )
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
 }
 
 test {

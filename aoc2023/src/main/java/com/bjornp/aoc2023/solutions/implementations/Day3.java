@@ -1,6 +1,6 @@
 package com.bjornp.aoc2023.solutions.implementations;
 
-import com.bjornp.aoc2023.annotation.Solution;
+import com.bjornp.aoc2023.annotation.SolutionDay;
 import com.bjornp.aoc2023.solutions.AdventOfCodeSolution;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Solution(day = 3)
+@SolutionDay(day = 3)
 @Slf4j
 public class Day3 extends AdventOfCodeSolution {
     private int height;
@@ -20,9 +20,11 @@ public class Day3 extends AdventOfCodeSolution {
 
     public Day3() {
         super(3);
+
+        register("a", this::runSolutionA);
+        register("b", this::runSolutionB);
     }
 
-    @Override
     protected String runSolutionA(String input) {
         var splitgrid = input.split("\n");
         this.width = splitgrid[0].length();
@@ -95,7 +97,6 @@ public class Day3 extends AdventOfCodeSolution {
         return new ImmutablePair<>(x, y);
     }
 
-    @Override
     protected String runSolutionB(String input) {
         var splitgrid = input.split("\n");
         this.width = splitgrid[0].length();

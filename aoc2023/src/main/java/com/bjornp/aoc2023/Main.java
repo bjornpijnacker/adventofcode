@@ -1,7 +1,6 @@
 package com.bjornp.aoc2023;
 
 import com.bjornp.aoc2023.annotation.SolutionRegistry;
-import com.bjornp.aoc2023.solutions.AdventOfCodeSolution;
 import lombok.SneakyThrows;
 import org.apache.commons.cli.*;
 import org.slf4j.LoggerFactory;
@@ -9,6 +8,8 @@ import org.slf4j.LoggerFactory;
 public class Main {
     @SneakyThrows
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler(new GlobalExceptionHandler());
+
         final var logger = LoggerFactory.getLogger(Main.class);
 
         var options = new Options();
@@ -17,10 +18,10 @@ public class Main {
         dayOption.setRequired(true);
         options.addOption(dayOption);
 
-        var runtypeOption = new Option("r", "runtype", true, "Set runtype");
-        runtypeOption.setRequired(true);
-        runtypeOption.setType(AdventOfCodeSolution.RunType.class);
-        options.addOption(runtypeOption);
+        var methodOption = new Option("m", "method", true, "Set method");
+        methodOption.setRequired(true);
+        methodOption.setType(String.class);
+        options.addOption(methodOption);
 
         var testinputOption = new Option("t", "testinput", false, "Set flag to enable loading test.txt");
         testinputOption.setType(Boolean.class);
@@ -30,14 +31,14 @@ public class Main {
         var formatter = new HelpFormatter();
 
         int day = 0;
-        AdventOfCodeSolution.RunType runType = AdventOfCodeSolution.RunType.BOTH;
+        String method = "";
         boolean testInput = false;
 
         try {
             var command = parser.parse(options, args);
 
             day = Integer.parseInt(command.getOptionValue(dayOption.getOpt()));
-            runType = AdventOfCodeSolution.RunType.valueOf(command.getOptionValue(runtypeOption.getOpt()));
+            method = command.getOptionValue(methodOption.getOpt());
             testInput = command.hasOption(testinputOption.getOpt());
         } catch (ParseException | NumberFormatException e) {
             System.out.println(e.getMessage());
@@ -48,6 +49,6 @@ public class Main {
         logger.info("Running AOC for day {}", day);
 
         SolutionRegistry.getInstance().runSolutionsScan();
-        SolutionRegistry.getInstance().runSolution(day, runType, testInput);
+        SolutionRegistry.getInstance().runSolution(day, method, testInput);
     }
 }

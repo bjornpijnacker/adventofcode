@@ -1,6 +1,6 @@
 package com.bjornp.aoc2023.solutions.implementations;
 
-import com.bjornp.aoc2023.annotation.Solution;
+import com.bjornp.aoc2023.annotation.SolutionDay;
 import com.bjornp.aoc2023.solutions.AdventOfCodeSolution;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,15 +9,17 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Solution(day = 1)
+@SolutionDay(day = 1)
 @Slf4j
 public class Day1 extends AdventOfCodeSolution {
 
     public Day1() {
         super(1);
+
+        register("a", this::runSolutionA);
+        register("b", this::runSolutionB);
     }
 
-    @Override
     protected String runSolutionA(String input) {
         var value = Arrays.stream(input.split("\n")).map(line -> {
             var numchars = Arrays.stream(line.split("")).filter(ch -> ch.matches("[0-9]+")).toList();
@@ -28,7 +30,6 @@ public class Day1 extends AdventOfCodeSolution {
         return String.valueOf(value);
     }
 
-    @Override
     protected String runSolutionB(String input) {
         var value = Arrays.stream(input.split("\n")).map(line -> {
             AtomicInteger begin = new AtomicInteger(Integer.MAX_VALUE);
