@@ -3,14 +3,13 @@ package com.bjornp.aoc2023.solutions;
 import com.bjornp.aoc2023.LogUtils;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-@Slf4j
 @SuperBuilder
 @Getter
 public abstract class AdventOfCodeSolution {
@@ -31,9 +30,11 @@ public abstract class AdventOfCodeSolution {
     }
 
     public void run(String name, boolean testmode) {
+        var log = LoggerFactory.getLogger(this.getClass());
+
         var inputString = testmode ? inputReader.readInput("test.txt") : inputReader.readInput();
 
-        LogUtils.prettyInfo("Running solution %d %s".formatted(day, name));
+        LogUtils.prettyInfo("Running solution %d %s".formatted(day, name), log);
 
         long start = System.nanoTime();
         var solution = this.solutions.get(name).apply(inputString);

@@ -68,6 +68,9 @@ public class Day5 extends AdventOfCodeSolution {
         Collections.reverse(reverseMaps);
 
         for (int i = 0; ; i++) {
+            if (i % 1e5 == 0) {
+                log.debug("%,d".formatted(i));
+            }
             AtomicLong result = new AtomicLong(i);
 
             reverseMaps.forEach(map -> result.set(map.reverseMap(result.get())));
@@ -143,10 +146,6 @@ public class Day5 extends AdventOfCodeSolution {
 
             private long source;
 
-            public boolean inRange(long val) {
-                return val >= source && val < source + range;
-            }
-
             public long map(long val) {
                 if (!inRange(val)) {
                     throw new IllegalArgumentException("Val not in range");
@@ -154,8 +153,8 @@ public class Day5 extends AdventOfCodeSolution {
                 return val + (destination - source);
             }
 
-            public boolean inReverseRange(long val) {
-                return val >= destination && val < destination + range;
+            public boolean inRange(long val) {
+                return val >= source && val < source + range;
             }
 
             public long reverseMap(long val) {
@@ -163,6 +162,10 @@ public class Day5 extends AdventOfCodeSolution {
                     throw new IllegalArgumentException("Val not in range");
                 }
                 return val + (source - destination);
+            }
+
+            public boolean inReverseRange(long val) {
+                return val >= destination && val < destination + range;
             }
         }
     }
