@@ -68,9 +68,9 @@ public class Day5 extends AdventOfCodeSolution {
         Collections.reverse(reverseMaps);
 
         for (int i = 0; ; i++) {
-            if (i % 1e5 == 0) {
-                log.debug("%,d".formatted(i));
-            }
+//            if (i % 1e5 == 0) {
+//                log.debug("%,d".formatted(i));
+//            }
             AtomicLong result = new AtomicLong(i);
 
             reverseMaps.forEach(map -> result.set(map.reverseMap(result.get())));

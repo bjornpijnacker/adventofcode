@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.slf4j.LoggerFactory;
 
+import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,10 +37,16 @@ public abstract class AdventOfCodeSolution {
 
         LogUtils.prettyInfo("Running solution %d %s".formatted(day, name), log);
 
+        System.gc();
+        var memoryStart = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+
         long start = System.nanoTime();
         var solution = this.solutions.get(name).apply(inputString);
         long end = System.nanoTime();
 
-        log.info("Solution %d %s (in %,d ms) :: %s".formatted(day, name, TimeUnit.NANOSECONDS.toMillis(end - start), solution));
+        System.gc();
+        var memoryEnd = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+
+        log.info("Solution %d %s (in %,d ms; %,d kb)  ->  %s".formatted(day, name, TimeUnit.NANOSECONDS.toMillis(end - start), (memoryEnd.getUsed() - memoryStart.getUsed()) / 1024, solution));
     }
 }

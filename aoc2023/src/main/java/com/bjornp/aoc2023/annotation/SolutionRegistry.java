@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -65,11 +66,27 @@ public class SolutionRegistry {
      */
     public void runSolution(int day, String methodNames, boolean testMode) throws NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException {
-        if (!this.solutions.containsKey(day)) {
+        if (day != 0 && !this.solutions.containsKey(day)) {
             throw new IllegalArgumentException("Day %d has not been registered".formatted(day));
         }
 
-        var solutionClass = this.solutions.get(day);
+        var start = System.nanoTime();
+
+        if (day == 0) {
+            var solutionClasses = this.solutions.values();
+            for (var solutionClass : solutionClasses) {
+                runSolution(solutionClass, methodNames, testMode);
+            }
+        } else {
+            var solutionClass = this.solutions.get(day);
+            runSolution(solutionClass, methodNames, testMode);
+        }
+
+        log.info("Complete runtime: %,d ms".formatted(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)));
+    }
+
+    private void runSolution(Class<AdventOfCodeSolution> solutionClass, String methodNames, boolean testMode) throws NoSuchMethodException,
+            InvocationTargetException, InstantiationException, IllegalAccessException {
         if (methodNames.equals("*")) {
             var solutionInstance = solutionClass.getConstructor().newInstance();
             for (Map.Entry<String, Function<String, String>> solution : solutionInstance.getSolutions().entrySet()) {
@@ -81,7 +98,7 @@ public class SolutionRegistry {
                 if (uniqueValues.add(method)) {  // run every method just once
                     var instance = solutionClass.getConstructor().newInstance();
                     if (!instance.getSolutions().containsKey(method)) {
-                        throw new IllegalArgumentException("Day %d has no registered method '%s'".formatted(day, method));
+                        throw new IllegalArgumentException("Day %d has no registered method '%s'".formatted(instance.getDay(), method));
                     }
                     instance.run(method, testMode);
                 }

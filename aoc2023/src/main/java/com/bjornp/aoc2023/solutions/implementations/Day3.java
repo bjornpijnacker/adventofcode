@@ -47,7 +47,7 @@ public class Day3 extends AdventOfCodeSolution {
             });
         }
 
-        log.info(String.valueOf(numberIndices.stream().map(this::reverseIndex).toList()));
+//        log.info(String.valueOf(numberIndices.stream().map(this::reverseIndex).toList()));
 
         var numbers = new ArrayList<Integer>();
 
@@ -61,7 +61,7 @@ public class Day3 extends AdventOfCodeSolution {
             }
         }
 
-        log.info(String.valueOf(numbers));
+//        log.info(String.valueOf(numbers));
 
         return String.valueOf(numbers.stream().mapToInt(num -> num).sum());
     }
@@ -147,7 +147,7 @@ public class Day3 extends AdventOfCodeSolution {
             }
         });
 
-        log.info(String.valueOf(numbers));
+//        log.info(String.valueOf(numbers));
 
         return String.valueOf(numbers.stream().mapToInt(num -> num).sum());
     }
