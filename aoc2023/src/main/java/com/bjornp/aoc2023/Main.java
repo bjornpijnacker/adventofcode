@@ -5,7 +5,18 @@ import lombok.SneakyThrows;
 import org.apache.commons.cli.*;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 public class Main {
+    private static final String banner = """
+                 _       _                 _            __    ____          _        ____   ___ ____  _____\s
+                / \\   __| |_   _____ _ __ | |_    ___  / _|  / ___|___   __| | ___  |___ \\ / _ \\___ \\|___ /\s
+               / _ \\ / _` \\ \\ / / _ \\ '_ \\| __|  / _ \\| |_  | |   / _ \\ / _` |/ _ \\   __) | | | |__) | |_ \\\s
+              / ___ \\ (_| |\\ V /  __/ | | | |_  | (_) |  _| | |__| (_) | (_| |  __/  / __/| |_| / __/ ___) |
+             /_/   \\_\\__,_| \\_/ \\___|_| |_|\\__|  \\___/|_|    \\____\\___/ \\__,_|\\___| |_____|\\___/_____|____/\s
+                                                                                                           \s
+            """;
+
     @SneakyThrows
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler(new GlobalExceptionHandler());
@@ -45,6 +56,8 @@ public class Main {
             formatter.printHelp("aoc2023", options);
             System.exit(1);
         }
+
+        Arrays.stream(banner.split("\n")).forEach(logger::info);
 
         logger.info("Running AOC for day {}", day);
 

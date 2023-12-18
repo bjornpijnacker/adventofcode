@@ -40,6 +40,11 @@ public class Day17 extends AdventOfCodeSolution {
 
         while (!q.isEmpty()) {
             var u = q.poll();
+
+            if (Objects.equals(u.searchUnit.position, new IntVector2D(grid.width - 1, grid.height - 1))) {
+                break;
+            }
+
             for (var v : u.searchUnit.getNeighbors()) {
                 if (grid.inBounds(v.position)) {
                     int alt = dists.get(u.searchUnit) + grid.sampleGrid(u.searchUnit.getPosition(), v.position);
