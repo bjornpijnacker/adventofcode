@@ -16,6 +16,19 @@ public class Coordinate2D {
         return x + y * width;
     }
 
+    public Coordinate2D move(Direction2D direction) {
+        return this.move(direction, 1);
+    }
+
+    public Coordinate2D move(Direction2D direction, int s) {
+        return switch (direction) {
+            case NORTH -> this.n(s);
+            case EAST -> this.e(s);
+            case SOUTH -> this.s(s);
+            case WEST -> this.w(s);
+        };
+    }
+
     public Coordinate2D n() {
         return n(1);
     }
