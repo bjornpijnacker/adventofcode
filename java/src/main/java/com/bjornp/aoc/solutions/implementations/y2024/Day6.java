@@ -24,31 +24,6 @@ public class Day6 extends AdventOfCodeSolution {
         register("b", this::runSolutionB);
     }
 
-    private Set<Pair<Coordinate2D, Direction2D>> walkGrid(Grid2D<String> grid, Coordinate2D start) {
-        var seen = new HashSet<Pair<Coordinate2D, Direction2D>>();
-
-        var currentPos = start;
-        var direction = Direction2D.NORTH;
-
-        while (grid.inBounds(currentPos)) {
-            if (seen.contains(Pair.of(currentPos, direction))) {
-                throw new GoingInCirclesException(currentPos);
-            }
-            seen.add(Pair.of(currentPos, direction));
-
-            var nextPos = currentPos.move(direction);
-            if (!grid.inBounds(nextPos)) break;
-            // check if the next spot is valid to move to
-            if (!grid.get(nextPos).equals("#")) {
-                currentPos = nextPos;
-            } else {  // if not, rotate right and continue
-                direction = direction.right();
-            }
-        }
-
-        return seen;
-    }
-
     protected String runSolutionA(String input) {
         var grid = new Grid2D<>(Arrays
                 .stream(input.split("\n"))
@@ -70,29 +45,56 @@ public class Day6 extends AdventOfCodeSolution {
         var start = grid.indexOf("^").get();
         grid.replaceAll("^", ".");
 
-        var path = walkGrid(grid, start)
-                .stream().map(Pair::getLeft)
-                .distinct()
-                .collect(Collectors.toList());
+        var path = walkGrid(grid, start).stream().map(Pair::getLeft).distinct().collect(Collectors.toList());
         path.remove(start);
 
-        var nWorkingObstructions = 0;
+//        var nWorkingObstructions = 0;
 
-        for (var obstruction : path) {
-            if (obstruction.equals(start)) continue;
+        var nWorkingObstructions = path.parallelStream().filter(obstruction -> {
+            if (obstruction.equals(start)) {
+                return false;
+            }
 
             var obstructedGrid = new Grid2D<>(grid);
             obstructedGrid.set(obstruction, "#");
 
             try {
                 walkGrid(obstructedGrid, start);
+                return false;
                 // if returns, grid was left.
             } catch (GoingInCirclesException e) {
-                nWorkingObstructions++;
+                return true;
+            }
+        }).count();
+
+        return "%,d".formatted(nWorkingObstructions);
+    }
+
+    private Set<Pair<Coordinate2D, Direction2D>> walkGrid(Grid2D<String> grid, Coordinate2D start) {
+        var seen = new HashSet<Pair<Coordinate2D, Direction2D>>();
+
+        var currentPos = start;
+        var direction = Direction2D.NORTH;
+
+        while (grid.inBounds(currentPos)) {
+            if (seen.contains(Pair.of(currentPos, direction))) {
+                throw new GoingInCirclesException(currentPos);
+            }
+            seen.add(Pair.of(currentPos, direction));
+
+            var nextPos = currentPos.move(direction);
+            if (!grid.inBounds(nextPos)) {
+                break;
+            }
+            // check if the next spot is valid to move to
+            if (!grid.get(nextPos).equals("#")) {
+                currentPos = nextPos;
+            } else {  // if not, rotate right and continue
+                direction = direction.right();
             }
         }
 
-        return "%,d".formatted(nWorkingObstructions);
+        return seen;
     }
 
     private static class GoingInCirclesException extends RuntimeException {
