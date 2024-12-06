@@ -2,7 +2,7 @@ package com.bjornp.aoc.solutions.implementations.y2024;
 
 import com.bjornp.aoc.annotation.SolutionDay;
 import com.bjornp.aoc.solutions.AdventOfCodeSolution;
-import com.bjornp.aoc.util.Coordinate2D;
+import com.bjornp.aoc.util.IntVector2D;
 import com.bjornp.aoc.util.Grid2D;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +26,7 @@ public class Day4 extends AdventOfCodeSolution {
         // count horizontal
         for (int x = 0; x < grid.getWidth() - 3; ++x) {
             for (int y = 0; y < grid.getHeight(); ++y) {
-                var coord = new Coordinate2D(x, y);
+                var coord = new IntVector2D(x, y);
                 String xmas = String.join(
                         "",
                         grid.get(coord),
@@ -43,7 +43,7 @@ public class Day4 extends AdventOfCodeSolution {
         // count vertical
         for (int x = 0; x < grid.getWidth(); ++x) {
             for (int y = 0; y < grid.getHeight() - 3; ++y) {
-                var coord = new Coordinate2D(x, y);
+                var coord = new IntVector2D(x, y);
                 String xmas = String.join(
                         "",
                         grid.get(coord),
@@ -60,7 +60,7 @@ public class Day4 extends AdventOfCodeSolution {
         // count vertical SE
         for (int x = 0; x < grid.getWidth() - 3; ++x) {
             for (int y = 0; y < grid.getHeight() - 3; ++y) {
-                var coord = new Coordinate2D(x, y);
+                var coord = new IntVector2D(x, y);
                 String xmas = String.join(
                         "",
                         grid.get(coord),
@@ -77,7 +77,7 @@ public class Day4 extends AdventOfCodeSolution {
         // count vertical SW
         for (int x = 3; x < grid.getWidth(); ++x) {
             for (int y = 0; y < grid.getHeight() - 3; ++y) {
-                var coord = new Coordinate2D(x, y);
+                var coord = new IntVector2D(x, y);
                 String xmas = String.join(
                         "",
                         grid.get(coord),
@@ -100,7 +100,7 @@ public class Day4 extends AdventOfCodeSolution {
 
         for (int x = 0; x < grid.getWidth() - 2; ++x) {
             for (int y = 0; y < grid.getHeight() - 2; ++y) {
-                var coord = new Coordinate2D(x, y);
+                var coord = new IntVector2D(x, y);
                 String xmas1 = String.join("", grid.get(coord), grid.get(coord.se()), grid.get(coord.se(2)));
                 String xmas2 = String.join("", grid.get(coord.e(2)), grid.get(coord.se()), grid.get(coord.s(2)));
                 if ((xmas1.equals("MAS") || xmas1.equals("SAM")) && (xmas2.equals("MAS") || xmas2.equals("SAM"))) {

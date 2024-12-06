@@ -28,22 +28,22 @@ public class Grid2D<T> {
         this.grid.addAll(grid.grid);
     }
     
-    private Coordinate2D fromIndex(int index) {
+    private IntVector2D fromIndex(int index) {
             int x = index % width;
             int y = index / width;
-            return new Coordinate2D(x, y);
+            return new IntVector2D(x, y);
         }
 
-    public T get(Coordinate2D coordinate) {
+    public T get(IntVector2D coordinate) {
         return grid.get(coordinate.getIndex(width));
     }
 
     /**
      * Returns the first index of value row-wise.
      * @param value Value to find
-     * @return Optional<Coordinate2D>
+     * @return Optional<IntVector2D>
      */
-    public Optional<Coordinate2D> indexOf(T value) {
+    public Optional<IntVector2D> indexOf(T value) {
         var index = grid.indexOf(value);
         if (index == -1) return Optional.empty();
         return Optional.of(fromIndex(index));
@@ -53,21 +53,21 @@ public class Grid2D<T> {
      * Warning: very slow operation!
      */
     public void replaceAll(T value, T newValue) {
-        Optional<Coordinate2D> idx;
+        Optional<IntVector2D> idx;
         while ((idx = indexOf(value)).isPresent()) {
             grid.set(idx.get().getIndex(width), newValue);
         }
     }
 
-    public void set(Coordinate2D coordinate, T value) {
+    public void set(IntVector2D coordinate, T value) {
         grid.set(coordinate.getIndex(width), value);
     }
 
-    public boolean inBounds(Coordinate2D coordinate) {
+    public boolean inBounds(IntVector2D coordinate) {
         return coordinate.getX() < width && coordinate.getY() < height && coordinate.getX() >= 0 && coordinate.getY() >= 0;
     }
 
-    public String toString(Collection<Coordinate2D> overlay, T overlayValue) {
+    public String toString(Collection<IntVector2D> overlay, T overlayValue) {
         var gridCopy = new Grid2D<>(this);
         overlay.forEach(ol -> gridCopy.grid.set(ol.getIndex(gridCopy.width), overlayValue));
         return gridCopy.toString();

@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -76,36 +75,35 @@ public class SolutionRegistry {
         if (day == 0) {
             var solutionClasses = this.solutions.values();
             for (var solutionClass : solutionClasses) {
-                runSolution(solutionClass, methodNames, testMode);
+                runSolution(solutionClass, methodNames, testMode, new Day(day, year));
             }
         } else {
             var solutionClass = this.solutions.get(new Day(day, year));
-            runSolution(solutionClass, methodNames, testMode);
+            runSolution(solutionClass, methodNames, testMode, new Day(day, year));
         }
 
-        log.info("Complete runtime: %,d ms".formatted(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)));
+        log.info("Complete runtime: {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
     }
 
-    private void runSolution(Class<AdventOfCodeSolution> solutionClass, String methodNames, boolean testMode) throws
+    private void runSolution(Class<AdventOfCodeSolution> solutionClass, String methodNames, boolean testMode, Day day) throws
             NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        if (methodNames.equals("*")) {
-            var solutionInstance = solutionClass.getConstructor().newInstance();
-            for (Map.Entry<String, Function<String, String>> solution : solutionInstance.getSolutions().entrySet()) {
-                solutionInstance.run(solution.getKey(), testMode);
-            }
-        } else {
-            Set<String> uniqueValues = new HashSet<>();
-            for (String method : methodNames.split(",")) {
-                if (uniqueValues.add(method)) {  // run every method just once
-                    var instance = solutionClass.getConstructor().newInstance();
-                    if (!instance.getSolutions().containsKey(method)) {
-                        throw new IllegalArgumentException("Day %d has no registered method '%s'".formatted(
-                                instance.getDay(),
-                                method
-                        ));
-                    }
-                    instance.run(method, testMode);
+        Set<String> uniqueValues = new HashSet<>();
+        for (String method : methodNames.split(",")) {
+            if (uniqueValues.add(method)) {  // run every method just once
+                AdventOfCodeSolution instance;
+                try {
+                    instance = solutionClass.getDeclaredConstructor(int.class, int.class).newInstance(day.day, day.year);
+                } catch (NoSuchMethodException e) {
+                    log.info("No int,int constructor found, falling back to legacy method");
+                    instance = solutionClass.getDeclaredConstructor().newInstance();
                 }
+                if (!instance.getSolutions().containsKey(method)) {
+                    throw new IllegalArgumentException("Day %d has no registered method '%s'".formatted(
+                            instance.getDay(),
+                            method
+                    ));
+                }
+                instance.run(method, testMode);
             }
         }
     }

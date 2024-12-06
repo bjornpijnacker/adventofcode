@@ -2,7 +2,7 @@ package com.bjornp.aoc.solutions.implementations.y2024;
 
 import com.bjornp.aoc.annotation.SolutionDay;
 import com.bjornp.aoc.solutions.AdventOfCodeSolution;
-import com.bjornp.aoc.util.Coordinate2D;
+import com.bjornp.aoc.util.IntVector2D;
 import com.bjornp.aoc.util.Direction2D;
 import com.bjornp.aoc.util.Grid2D;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Day6 extends AdventOfCodeSolution {
 
-    public Day6() {
-        super(6, 2024);
+    public Day6(int day, int year) {
+        super(day, year);
 
         register("a", this::runSolutionA);
         register("b", this::runSolutionB);
@@ -70,8 +70,8 @@ public class Day6 extends AdventOfCodeSolution {
         return "%,d".formatted(nWorkingObstructions);
     }
 
-    private Set<Pair<Coordinate2D, Direction2D>> walkGrid(Grid2D<String> grid, Coordinate2D start) {
-        var seen = new HashSet<Pair<Coordinate2D, Direction2D>>();
+    private Set<Pair<IntVector2D, Direction2D>> walkGrid(Grid2D<String> grid, IntVector2D start) {
+        var seen = new HashSet<Pair<IntVector2D, Direction2D>>();
 
         var currentPos = start;
         var direction = Direction2D.NORTH;
@@ -98,7 +98,7 @@ public class Day6 extends AdventOfCodeSolution {
     }
 
     private static class GoingInCirclesException extends RuntimeException {
-        public GoingInCirclesException(Coordinate2D pos) {
+        public GoingInCirclesException(IntVector2D pos) {
             super("Going in circles at %s".formatted(pos));
         }
     }
