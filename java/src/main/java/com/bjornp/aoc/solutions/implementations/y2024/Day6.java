@@ -10,6 +10,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @SolutionDay(year = 2024, day = 6)
 @Slf4j
@@ -22,14 +24,7 @@ public class Day6 extends AdventOfCodeSolution {
         register("b", this::runSolutionB);
     }
 
-    protected String runSolutionA(String input) {
-        var grid = new Grid2D<>(Arrays
-                .stream(input.split("\n"))
-                .map(line -> Arrays.stream(line.split("")).toArray(String[]::new))
-                .toArray(String[][]::new));
-        var start = grid.indexOf("^").get();
-        grid.replaceAll("^", ".");
-
+    private Set<Pair<Coordinate2D, Direction2D>> walkGrid(Grid2D<String> grid, Coordinate2D start) {
         var seen = new HashSet<Pair<Coordinate2D, Direction2D>>();
 
         var currentPos = start;
@@ -37,7 +32,7 @@ public class Day6 extends AdventOfCodeSolution {
 
         while (grid.inBounds(currentPos)) {
             if (seen.contains(Pair.of(currentPos, direction))) {
-                throw new RuntimeException("Going in circles at %s".formatted(currentPos));
+                throw new GoingInCirclesException(currentPos);
             }
             seen.add(Pair.of(currentPos, direction));
 
@@ -51,6 +46,19 @@ public class Day6 extends AdventOfCodeSolution {
             }
         }
 
+        return seen;
+    }
+
+    protected String runSolutionA(String input) {
+        var grid = new Grid2D<>(Arrays
+                .stream(input.split("\n"))
+                .map(line -> Arrays.stream(line.split("")).toArray(String[]::new))
+                .toArray(String[][]::new));
+        var start = grid.indexOf("^").get();
+        grid.replaceAll("^", ".");
+
+        var seen = walkGrid(grid, start);
+
         return "%,d".formatted(seen.stream().map(Pair::getLeft).distinct().count());
     }
 
@@ -62,39 +70,25 @@ public class Day6 extends AdventOfCodeSolution {
         var start = grid.indexOf("^").get();
         grid.replaceAll("^", ".");
 
+        var path = walkGrid(grid, start)
+                .stream().map(Pair::getLeft)
+                .distinct()
+                .collect(Collectors.toList());
+        path.remove(start);
+
         var nWorkingObstructions = 0;
 
-        for (int x = 0; x < grid.getWidth(); x++) {
-            for (int y = 0; y < grid.getHeight(); y++) {
-                var obstruction = new Coordinate2D(x, y);
-                if (obstruction.equals(start)) continue;
+        for (var obstruction : path) {
+            if (obstruction.equals(start)) continue;
 
-                var obstructedGrid = new Grid2D<>(grid);
-                obstructedGrid.set(obstruction, "#");
-                var seen = new HashSet<Pair<Coordinate2D, Direction2D>>();
+            var obstructedGrid = new Grid2D<>(grid);
+            obstructedGrid.set(obstruction, "#");
 
-                var currentPos = start;
-                var direction = Direction2D.NORTH;
-
-                try {
-                    while (obstructedGrid.inBounds(currentPos)) {
-                        if (seen.contains(Pair.of(currentPos, direction))) {
-                            throw new GoingInCirclesException(currentPos);
-                        }
-                        seen.add(Pair.of(currentPos, direction));
-
-                        var nextPos = currentPos.move(direction);
-                        if (!obstructedGrid.inBounds(nextPos)) break;
-                        // check if the next spot is valid to move to
-                        if (!obstructedGrid.get(nextPos).equals("#")) {
-                            currentPos = nextPos;
-                        } else {  // if not, rotate right and continue
-                            direction = direction.right();
-                        }
-                    }
-                } catch (GoingInCirclesException e) {
-                    nWorkingObstructions++;
-                }
+            try {
+                walkGrid(obstructedGrid, start);
+                // if returns, grid was left.
+            } catch (GoingInCirclesException e) {
+                nWorkingObstructions++;
             }
         }
 
