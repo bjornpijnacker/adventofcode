@@ -6,6 +6,7 @@ import lombok.Getter;
 import java.util.*;
 
 public class Grid2D<T> {
+    @Getter
     private final List<T> grid = new ArrayList<>();
 
     @Getter
@@ -47,6 +48,19 @@ public class Grid2D<T> {
         var index = grid.indexOf(value);
         if (index == -1) return Optional.empty();
         return Optional.of(fromIndex(index));
+    }
+
+    public Collection<IntVector2D> findAll(T value) {
+        var coordinates = new HashSet<IntVector2D>();
+        for (int i = 0; i < width; ++i) {
+            for (int j = 0; j < height; ++j) {
+                var c = new IntVector2D(i, j);
+                if (this.get(c).equals(value)) {
+                    coordinates.add(c);
+                }
+            }
+        }
+        return coordinates;
     }
 
     /**
