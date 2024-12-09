@@ -2,9 +2,13 @@ package com.bjornp.aoc.solutions.implementations.y2024;
 
 import com.bjornp.aoc.annotation.SolutionDay;
 import com.bjornp.aoc.solutions.AdventOfCodeSolution;
+import com.bjornp.aoc.util.viz.Colormap;
+import com.bjornp.aoc.util.viz.Graphics;
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,8 +26,20 @@ public class Day9 extends AdventOfCodeSolution {
         register("b", this::runSolutionB);
     }
 
+    @SneakyThrows
     protected String runSolutionA(String input) {
         var fs = parseInput(input);
+
+        var totalSize = fs.stream().mapToInt(Block::getSize).sum();
+        var width = (int) Math.ceil(Math.sqrt(totalSize));
+        var height = totalSize / width + 1;
+
+        var gr = new Graphics("Day 9 part 1", width, height - 1);
+        var g = gr.getGraphics();
+
+        Thread.sleep(5000);
+
+        plotFs(g, fs, width, height);
 
         // REORDER FILES
         for (int i = 0; i < fs.size(); i++) {
@@ -62,13 +78,29 @@ public class Day9 extends AdventOfCodeSolution {
                 fs.remove(space);
                 i--;  // compensate for removing the space
             }
+
+            plotFs(g, fs, width, height);
         }
 
+        plotFs(g, fs, width, height);
+        gr.dispose();
         return "%d".formatted(calculateChecksum(fs));
     }
 
+    @SneakyThrows
     protected String runSolutionB(String input) {
         var fs = parseInput(input);
+
+        var totalSize = fs.stream().mapToInt(Block::getSize).sum();
+        var width = (int) Math.ceil(Math.sqrt(totalSize));
+        var height = totalSize / width + 1;
+
+        var gr = new Graphics("Day 9 part 2", width, height - 1);
+        var g = gr.getGraphics();
+
+        Thread.sleep(5000);
+
+        plotFs(g, fs, width, height);
 
         // REORDER FILES
         for (int i = fs.size() - 1; i >= 0; i--) {
@@ -106,8 +138,11 @@ public class Day9 extends AdventOfCodeSolution {
 //                }
 //            }
 
+            plotFs(g, fs, width, height);
         }
 
+        plotFs(g, fs, width, height);
+        gr.dispose();
         return "%d".formatted(calculateChecksum(fs));
     }
 
@@ -119,9 +154,7 @@ public class Day9 extends AdventOfCodeSolution {
         boolean isSpace = false;
         int id = 0;
         for (var ch : chars) {
-            fs.add(isSpace
-                   ? new Block(0, ch - 48, Block.Type.SPACE)
-                   : new Block(id++, ch - 48, Block.Type.FILE));
+            fs.add(isSpace ? new Block(0, ch - 48, Block.Type.SPACE) : new Block(id++, ch - 48, Block.Type.FILE));
             isSpace = !isSpace;
         }
 
@@ -138,6 +171,23 @@ public class Day9 extends AdventOfCodeSolution {
             pos += block.size;
         }
         return checksum.get();
+    }
+
+    private void plotFs(java.awt.Graphics g, List<Block> fs, int width, int height) {
+        int pos = 0;
+        for (var block : fs) {
+            if (block.type == Block.Type.SPACE) {
+                g.setColor(Color.BLACK);
+            } else {
+                g.setColor(Colormap.Turbo.get((double) block.id / 10000));
+            }
+            g.fillRect(pos % width, pos / height, block.size, 1);
+            var xEnd = (pos % width) + block.size;
+            if (xEnd > width) {
+                g.fillRect(0, 1 + pos / height, xEnd - width, 1);
+            }
+            pos += block.size;
+        }
     }
 
     private void logFs(List<Block> fs) {
