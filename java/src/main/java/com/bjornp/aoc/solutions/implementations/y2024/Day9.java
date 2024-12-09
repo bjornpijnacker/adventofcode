@@ -131,8 +131,10 @@ public class Day9 extends AdventOfCodeSolution {
     private long calculateChecksum(List<Block> fs) {
         int pos = 0;
         AtomicLong checksum = new AtomicLong();
-        for (var block : fs.stream().filter(f -> f.type == Block.Type.FILE).toList()) {
-            IntStream.range(pos, pos + block.size).forEach(p -> checksum.addAndGet((long) p * (long) block.id));
+        for (var block : fs) {
+            if (block.type == Block.Type.FILE) {
+                IntStream.range(pos, pos + block.size).forEach(p -> checksum.addAndGet((long) p * (long) block.id));
+            }
             pos += block.size;
         }
         return checksum.get();
