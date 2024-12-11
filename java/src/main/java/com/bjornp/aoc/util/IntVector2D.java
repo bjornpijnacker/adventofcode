@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.util.Collection;
+
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -95,6 +97,6 @@ public class IntVector2D {
 
     @Override
     public String toString() {
-        return "<%,d, %,d>".formatted(x, y);
+        return "[%,d, %,d]".formatted(x, y);
     }
 }

@@ -19,11 +19,8 @@ repositories {
 dependencies {
     implementation 'ch.qos.logback:logback-classic:1.4.14'
     implementation group: 'org.sosy-lab', name: 'javasmt-solver-z3', version: 'z3-4.4.1-1558-gf96cfea'
-
     implementation 'org.jgrapht:jgrapht-core:1.5.2'
-
     implementation 'com.google.code.gson:gson:2.10.1'
-
     implementation "commons-cli:commons-cli:1.5.0"
     implementation "commons-io:commons-io:2.11.0"
     implementation "commons-codec:commons-codec:1.15"

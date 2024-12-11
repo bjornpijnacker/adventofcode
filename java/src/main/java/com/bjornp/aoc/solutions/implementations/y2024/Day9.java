@@ -3,7 +3,7 @@ package com.bjornp.aoc.solutions.implementations.y2024;
 import com.bjornp.aoc.annotation.SolutionDay;
 import com.bjornp.aoc.solutions.AdventOfCodeSolution;
 import com.bjornp.aoc.util.viz.Colormap;
-import com.bjornp.aoc.util.viz.Graphics;
+import com.bjornp.aoc.util.viz.Animation;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -34,57 +34,53 @@ public class Day9 extends AdventOfCodeSolution {
         var width = (int) Math.ceil(Math.sqrt(totalSize));
         var height = totalSize / width + 1;
 
-        var gr = new Graphics("Day 9 part 1", width, height - 1);
-        var g = gr.getGraphics();
+        try (var anim = new Animation(this, "Part 1", width, height, 60)) {
+            plotFs(anim, fs);
 
-        Thread.sleep(5000);
-
-        plotFs(g, fs, width, height);
-
-        // REORDER FILES
-        for (int i = 0; i < fs.size(); i++) {
-            if (fs.get(i).type == Block.Type.FILE) {
-                continue;
-            }
-            var space = fs.get(i);
-
-            var fillers = new ArrayList<Block>();
-
-            for (int j = fs.size() - 1; j >= 0; j--) {
-                if (j < i) {
-                    break; // don't go moving stuff later in the list
+            // REORDER FILES
+            for (int i = 0; i < fs.size(); i++) {
+                if (fs.get(i).type == Block.Type.FILE) {
+                    continue;
                 }
-                if (fs.get(j).type == Block.Type.FILE) {
-                    fillers.add(fs.get(j));  // index from end
-                    if (fillers.stream().mapToInt(f -> f.size).sum() >= space.size) {
-                        break;
+                var space = fs.get(i);
+
+                var fillers = new ArrayList<Block>();
+
+                for (int j = fs.size() - 1; j >= 0; j--) {
+                    if (j < i) {
+                        break; // don't go moving stuff later in the list
+                    }
+                    if (fs.get(j).type == Block.Type.FILE) {
+                        fillers.add(fs.get(j));  // index from end
+                        if (fillers.stream().mapToInt(f -> f.size).sum() >= space.size) {
+                            break;
+                        }
                     }
                 }
-            }
 
-            for (var filler : fillers) {
-                if (filler.size <= space.size) {
-                    fs.remove(filler);
-                    fs.add(i++, filler);
-                    space.size -= filler.size;
-                } else {  // need to split up the filler; should only occur for last item
-                    var newBlock = new Block(filler.id, space.size, Block.Type.FILE);
-                    fs.add(i++, newBlock);
-                    filler.size -= space.size;
-                    space.size -= newBlock.size;
+                for (var filler : fillers) {
+                    if (filler.size <= space.size) {
+                        fs.remove(filler);
+                        fs.add(i++, filler);
+                        space.size -= filler.size;
+                    } else {  // need to split up the filler; should only occur for last item
+                        var newBlock = new Block(filler.id, space.size, Block.Type.FILE);
+                        fs.add(i++, newBlock);
+                        filler.size -= space.size;
+                        space.size -= newBlock.size;
+                    }
                 }
-            }
-            if (space.size <= 0) {
-                fs.remove(space);
-                i--;  // compensate for removing the space
+                if (space.size <= 0) {
+                    fs.remove(space);
+                    i--;  // compensate for removing the space
+                }
+
+                if (i % 8 == 0) plotFs(anim, fs);
             }
 
-            plotFs(g, fs, width, height);
+            plotFs(anim, fs);
+            return "%d".formatted(calculateChecksum(fs));
         }
-
-        plotFs(g, fs, width, height);
-        gr.dispose();
-        return "%d".formatted(calculateChecksum(fs));
     }
 
     @SneakyThrows
@@ -95,38 +91,34 @@ public class Day9 extends AdventOfCodeSolution {
         var width = (int) Math.ceil(Math.sqrt(totalSize));
         var height = totalSize / width + 1;
 
-        var gr = new Graphics("Day 9 part 2", width, height - 1);
-        var g = gr.getGraphics();
+        try (var anim = new Animation(this, "Part 2", width, height, 60)) {
+            plotFs(anim, fs);
 
-        Thread.sleep(5000);
+            // REORDER FILES
+            for (int i = fs.size() - 1; i >= 0; i--) {
+                var file = fs.get(i);  // <- file with the highest file number; move to the left
+                if (file.type == Block.Type.SPACE) {
+                    continue;
+                }
 
-        plotFs(g, fs, width, height);
+                // FIND THE FIRST SPACE THAT WILL FIT
+                var space = fs.stream().filter(f -> f.type == Block.Type.SPACE && f.size >= file.size).findFirst();
+                if (space.isEmpty()) {
+                    continue;  // cannot move file, doesn't fit anywhere else
+                }
 
-        // REORDER FILES
-        for (int i = fs.size() - 1; i >= 0; i--) {
-            var file = fs.get(i);  // <- file with the highest file number; move to the left
-            if (file.type == Block.Type.SPACE) {
-                continue;
-            }
+                var index = fs.indexOf(space.get());
+                if (index > i) {
+                    continue;  // don't move it to the right
+                }
+                fs.remove(file);
+                fs.add(i, new Block(0, file.size, Block.Type.SPACE));  // add space where file was removed
+                i++;  // compensate for moving the file
+                fs.add(index, file);
+                space.get().size -= file.size;
 
-            // FIND THE FIRST SPACE THAT WILL FIT
-            var space = fs.stream().filter(f -> f.type == Block.Type.SPACE && f.size >= file.size).findFirst();
-            if (space.isEmpty()) {
-                continue;  // cannot move file, doesn't fit anywhere else
-            }
-
-            var index = fs.indexOf(space.get());
-            if (index > i) {
-                continue;  // don't move it to the right
-            }
-            fs.remove(file);
-            fs.add(i, new Block(0, file.size, Block.Type.SPACE));  // add space where file was removed
-            i++;  // compensate for moving the file
-            fs.add(index, file);
-            space.get().size -= file.size;
-
-            // MERGE CONTIGUOUS SPACES
-            // DOESN'T END UP BEING NECESSARY
+                // MERGE CONTIGUOUS SPACES
+                // DOESN'T END UP BEING NECESSARY
 
 //            for (int j = 0; j < fs.size() - 1; j++) {
 //                var a = fs.get(j);
@@ -138,12 +130,12 @@ public class Day9 extends AdventOfCodeSolution {
 //                }
 //            }
 
-            plotFs(g, fs, width, height);
-        }
+                if (i % 8 == 0) plotFs(anim, fs);
+            }
 
-        plotFs(g, fs, width, height);
-        gr.dispose();
-        return "%d".formatted(calculateChecksum(fs));
+            plotFs(anim, fs);
+            return "%d".formatted(calculateChecksum(fs));
+        }
     }
 
     private List<Block> parseInput(String input) {
@@ -173,7 +165,9 @@ public class Day9 extends AdventOfCodeSolution {
         return checksum.get();
     }
 
-    private void plotFs(java.awt.Graphics g, List<Block> fs, int width, int height) {
+    private void plotFs(Animation animation, List<Block> fs) {
+        var bi = animation.image();
+        var g = bi.getGraphics();
         int pos = 0;
         for (var block : fs) {
             if (block.type == Block.Type.SPACE) {
@@ -181,13 +175,14 @@ public class Day9 extends AdventOfCodeSolution {
             } else {
                 g.setColor(Colormap.Turbo.get((double) block.id / 10000));
             }
-            g.fillRect(pos % width, pos / height, block.size, 1);
-            var xEnd = (pos % width) + block.size;
-            if (xEnd > width) {
-                g.fillRect(0, 1 + pos / height, xEnd - width, 1);
+            g.fillRect(pos % animation.getWidth(), pos / animation.getHeight(), block.size, 1);
+            var xEnd = (pos % animation.getWidth()) + block.size;
+            if (xEnd > animation.getWidth()) {
+                g.fillRect(0, 1 + pos / animation.getHeight(), xEnd - animation.getWidth(), 1);
             }
             pos += block.size;
         }
+        animation.registerFrame(bi);
     }
 
     private void logFs(List<Block> fs) {

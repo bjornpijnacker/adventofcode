@@ -20,8 +20,11 @@ public abstract class AdventOfCodeSolution {
 
     private final Map<String, Function<String, String>> solutions;
 
+    private final int year;
+
     public AdventOfCodeSolution(int day, int year) {
         inputReader = AdventOfCodeInputReader.builder().day(day).year(year).build();
+        this.year = year;
         this.day = day;
         this.solutions = new HashMap<>();
     }
