@@ -14,6 +14,16 @@ public class IntVector2D {
 
     @EqualsAndHashCode.Include private final int y;
 
+    public IntVector2D(IntVector2D i) {
+        this.x = i.x;
+        this.y = i.y;
+    }
+
+    public IntVector2D(int i) {
+        this.x = i;
+        this.y = i;
+    }
+
     public int getIndex(int width) {
         return x + y * width;
     }
@@ -98,5 +108,17 @@ public class IntVector2D {
     @Override
     public String toString() {
         return "[%,d, %,d]".formatted(x, y);
+    }
+
+    public IntVector2D mult(int i) {
+        return new IntVector2D(this.x * i, this.y * i);
+    }
+
+    public IntVector2D add(IntVector2D o) {
+        return new IntVector2D(this.x + o.x, this.y + o.y);
+    }
+
+    public IntVector2D mod(int x, int y) {
+        return new IntVector2D(((this.x % x) + x) % x, ((this.y % y) + y) % y);
     }
 }

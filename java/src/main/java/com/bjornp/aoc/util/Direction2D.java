@@ -14,4 +14,22 @@ public enum Direction2D {
             case WEST -> NORTH;
         };
     }
+
+    public Direction2D invert() {
+        return switch (this) {
+            case NORTH -> SOUTH;
+            case EAST -> WEST;
+            case SOUTH -> NORTH;
+            case WEST -> EAST;
+        };
+    }
+
+    public Direction2D left() {
+        return switch (this) {
+            case NORTH -> WEST;
+            case EAST -> NORTH;
+            case SOUTH -> EAST;
+            case WEST -> SOUTH;
+        };
+    }
 }

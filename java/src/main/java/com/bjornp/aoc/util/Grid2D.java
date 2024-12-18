@@ -28,6 +28,12 @@ public class Grid2D<T> {
         this.height = grid.height;
         this.grid.addAll(grid.grid);
     }
+
+    public Grid2D(int width, int height, T init) {
+        this.width = width;
+        this.height = height;
+        this.grid.addAll(Collections.nCopies(width * height, init));
+    }
     
     private IntVector2D fromIndex(int index) {
             int x = index % width;
@@ -90,10 +96,17 @@ public class Grid2D<T> {
     public String toString() {
         var gridLs = Lists.partition(grid, width);
         var sb = new StringBuilder();
+        sb.append("\n");
         gridLs.forEach(grid -> {
             grid.forEach(sb::append);
             sb.append("\n");
         });
         return sb.toString();
+    }
+
+    public void swap(IntVector2D a, IntVector2D b) {
+        var c = grid.get(a.getIndex(width));
+        grid.set(a.getIndex(width), grid.get(b.getIndex(width)));
+        grid.set(b.getIndex(width), c);
     }
 }

@@ -166,23 +166,23 @@ public class Day9 extends AdventOfCodeSolution {
     }
 
     private void plotFs(Animation animation, List<Block> fs) {
-        var bi = animation.image();
-        var g = bi.getGraphics();
-        int pos = 0;
-        for (var block : fs) {
-            if (block.type == Block.Type.SPACE) {
-                g.setColor(Color.BLACK);
-            } else {
-                g.setColor(Colormap.Turbo.get((double) block.id / 10000));
-            }
-            g.fillRect(pos % animation.getWidth(), pos / animation.getHeight(), block.size, 1);
-            var xEnd = (pos % animation.getWidth()) + block.size;
-            if (xEnd > animation.getWidth()) {
-                g.fillRect(0, 1 + pos / animation.getHeight(), xEnd - animation.getWidth(), 1);
-            }
-            pos += block.size;
-        }
-        animation.registerFrame(bi);
+//        var bi = animation.image();
+//        var g = bi.getGraphics();
+//        int pos = 0;
+//        for (var block : fs) {
+//            if (block.type == Block.Type.SPACE) {
+//                g.setColor(Color.BLACK);
+//            } else {
+//                g.setColor(Colormap.Turbo.get((double) block.id / 10000));
+//            }
+//            g.fillRect(pos % animation.getWidth(), pos / animation.getHeight(), block.size, 1);
+//            var xEnd = (pos % animation.getWidth()) + block.size;
+//            if (xEnd > animation.getWidth()) {
+//                g.fillRect(0, 1 + pos / animation.getHeight(), xEnd - animation.getWidth(), 1);
+//            }
+//            pos += block.size;
+//        }
+//        animation.registerFrame(bi);
     }
 
     private void logFs(List<Block> fs) {

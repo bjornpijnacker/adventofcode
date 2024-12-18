@@ -28,8 +28,11 @@ public class Animation extends JFrame implements AutoCloseable {
     @SneakyThrows
     public Animation(AdventOfCodeSolution solution, String title, int width, int height, int fps) {
         var dir = Path.of("animations", String.valueOf(solution.getYear()), String.valueOf(solution.getDay()));
-
         var file = new File(dir.toFile(), "%s.mp4".formatted(title));
+
+        this.width = width;
+        this.height = height % 2 == 0 ? height : height + 1;
+
         if (!dir.toFile().isDirectory() && !dir.toFile().mkdirs()) {
             throw new RuntimeException("Could not create directory for animation frames: %s".formatted(dir));
         }
@@ -50,25 +53,25 @@ public class Animation extends JFrame implements AutoCloseable {
                 "-pix_fmt",
                 "yuv420p",
                 "-b:v",
-                "1M",
+                "2M",
                 file.getAbsolutePath()
         );
-        ffmpeg = pb.start();
+        ffmpeg = pb
+                .redirectOutput(new File("ffmpeg.std.out"))
+                .redirectError(new File("ffmpeg.err.out"))
+                .start();
         ffmpegIn = ffmpeg.getOutputStream();
 
-        this.width = width;
-        this.height = height;
-
         // also set up JFrame for interactive viewing
-        this.setSize(width, height);
-        this.setPreferredSize(new Dimension(width, height));
+        this.setSize(this.width, this.height);
+        this.setPreferredSize(new Dimension(this.width, this.height));
         this.setTitle("%d/%d - %s".formatted(solution.getYear(), solution.getDay(), title));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
 
     public BufferedImage image() {
-        return new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
 
     @SneakyThrows
