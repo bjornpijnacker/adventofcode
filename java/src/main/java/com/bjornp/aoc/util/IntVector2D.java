@@ -121,4 +121,8 @@ public class IntVector2D {
     public IntVector2D mod(int x, int y) {
         return new IntVector2D(((this.x % x) + x) % x, ((this.y % y) + y) % y);
     }
+
+    public int dist(IntVector2D o) {
+        return Math.abs(this.x - o.x) + Math.abs(this.y - o.y);
+    }
 }

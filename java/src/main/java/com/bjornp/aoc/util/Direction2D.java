@@ -32,4 +32,13 @@ public enum Direction2D {
             case WEST -> SOUTH;
         };
     }
+
+    public String toChar() {
+        return switch (this) {
+            case NORTH -> "^";
+            case EAST -> ">";
+            case SOUTH -> "v";
+            case WEST -> "<";
+        };
+    }
 }

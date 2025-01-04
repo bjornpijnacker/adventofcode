@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Grid2D<T> {
     @Getter
@@ -33,6 +34,14 @@ public class Grid2D<T> {
         this.width = width;
         this.height = height;
         this.grid.addAll(Collections.nCopies(width * height, init));
+    }
+
+    public List<T> xLine(int y) {
+        return IntStream.range(0, width).mapToObj(x -> this.get(new IntVector2D(x, y))).toList();
+    }
+
+    public List<T> yLine(int x) {
+        return IntStream.range(0, height).mapToObj(y -> this.get(new IntVector2D(x, y))).toList();
     }
     
     private IntVector2D fromIndex(int index) {
